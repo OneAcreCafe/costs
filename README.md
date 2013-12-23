@@ -1,4 +1,4 @@
-costs
+Costs
 =====
 
-Inventory and overhead tracker
+A system to track inventory and overhead costs.
