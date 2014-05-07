@@ -1,6 +1,6 @@
 Costs
 =====
 
-A system to track inventory and overhead costs.
+This is a system to manage the costs for a restaurant.
 
-The goal is a system which operates a business at cost. Also, as much as possible, cost data should come from signed metadata about bitcoin transactions.
+As much as possible, cost data should come from signed metadata about bitcoin transactions.
