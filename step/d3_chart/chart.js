@@ -18,8 +18,7 @@ var yAxis = d3.svg.axis()
 
 var svg = d3.select( 'body' ).append( 'svg' )
     .attr( {
-        width: width + margin.left + margin.right,
-        height: height + margin.top + margin.bottom
+        viewBox: "0 0 " + ( width + margin.left + margin.right ) + " " + ( height + margin.top + margin.bottom )
     } )
     .append( 'g' )
     .attr( 'transform', "translate(" + margin.left + "," + margin.top + ")" )
@@ -33,6 +32,13 @@ for( var i = 1; i <= 1000; i++ ) {
     } )
 }
 
+data.sort( function( a, b ) {
+    return a.date.getTime() - b.date.getTime()
+} )
+
+var pos = data.filter( function( d ) { return d.cost >= 0 } )
+var neg = data.filter( function( d ) { return d.cost < 0 } )
+
 x.domain( d3.extent( data, function( d ) { return d.date } ) )
 y.domain( d3.extent( data, function( d ) { return d.cost } ) )
 
@@ -42,7 +48,6 @@ svg.append( 'g' )
         transform: "translate(0," + height + ")"
     } )
     .call( xAxis )
-
 
 svg.append( 'g' )
     .attr( 'class', 'y axis' )
@@ -61,7 +66,14 @@ var line = d3.svg.line()
     .y( function( d ) { return y( d.cost ) } )
     
 svg.append( 'path' )
-    .datum( data )
+    .datum( pos )
+    .attr( {
+        class: 'line',
+        d: line
+    } )
+
+svg.append( 'path' )
+    .datum( neg )
     .attr( {
         class: 'line',
         d: line
