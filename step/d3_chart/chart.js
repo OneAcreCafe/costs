@@ -27,7 +27,7 @@ var data = []
 for( var i = 1; i <= 1000; i++ ) {
     data.push( {
         name: "Item #" + i,
-        cost: ( Math.random() < .25 ? 1 : -1 ) * 5 + Math.random() * 3,
+        cost: ( Math.random() < .25 ? -1 : 1 ) * ( 5 + Math.random() * 3 ),
         date: new Date( ( new Date() ).getTime() + ( 60 * 60 * 24 * 7 ) * Math.random() ) 
     } )
 }
@@ -39,8 +39,28 @@ data.sort( function( a, b ) {
 var pos = data.filter( function( d ) { return d.cost >= 0 } )
 var neg = data.filter( function( d ) { return d.cost < 0 } )
 
-x.domain( d3.extent( data, function( d ) { return d.date } ) )
-y.domain( d3.extent( data, function( d ) { return d.cost } ) )
+var stepPos = []
+var total = 0
+pos.forEach( function( d ) {
+    stepPos.push( {
+        name: d.name,
+        date: d.date,
+        cost: total += d.cost
+    } )
+} )
+
+var stepNeg = []
+var total = 0
+neg.forEach( function( d ) {
+    stepNeg.push( {
+        name: d.name,
+        date: d.date,
+        cost: total += Math.abs( d.cost )
+    } )
+} )
+
+x.domain( d3.extent( stepPos, function( d ) { return d.date } ) )
+y.domain( d3.extent( stepPos, function( d ) { return d.cost } ) )
 
 svg.append( 'g' )
     .attr( {
@@ -66,15 +86,15 @@ var line = d3.svg.line()
     .y( function( d ) { return y( d.cost ) } )
     
 svg.append( 'path' )
-    .datum( pos )
+    .datum( stepPos )
     .attr( {
-        class: 'line',
+        class: 'line pos',
         d: line
     } )
 
 svg.append( 'path' )
-    .datum( neg )
+    .datum( stepNeg )
     .attr( {
-        class: 'line',
+        class: 'line neg',
         d: line
     } )

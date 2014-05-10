@@ -18,3 +18,11 @@ body {
   stroke: steelblue;
   stroke-width: 1.5px;
 }
+
+.pos {
+    stroke: green;
+}
+
+.neg {
+    stroke: red;
+}
