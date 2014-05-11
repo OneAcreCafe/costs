@@ -85,17 +85,12 @@ svg.append( 'g' )
 var line = d3.svg.line()
     .x( function( d ) { return x( d.date ) } )
     .y( function( d ) { return y( d.cost ) } )
-    
-svg.append( 'path' )
-    .datum( step['pos'] )
-    .attr( {
-        class: 'line pos',
-        d: line
-    } )
 
-svg.append( 'path' )
-    .datum( step['neg'] )
-    .attr( {
-        class: 'line neg',
-        d: line
-    } )
+;['pos', 'neg'].forEach( function( type ) {   
+    svg.append( 'path' )
+        .datum( step[type] )
+        .attr( {
+            class: ['line', type],
+            d: line
+        } )
+} )
