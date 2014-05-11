@@ -17,23 +17,23 @@ App.ApplicationRoute = Ember.Route.extend( {
 App.BarChartComponent = Ember.Component.extend({
     tagName: 'svg',
     attributeBindings: 'width height'.w(),
-    margin: {top: 20, right: 20, bottom: 30, left: 40},
+    margin: { top: 20, right: 20, bottom: 30, left: 40 },
     
-    w: function(){
-        return ( this.get('width') || 600 ) - this.get('margin.left') - this.get('margin.right');
-    }.property('width'),
+    w: function() {
+        return ( this.get( 'width' ) || 600 ) - this.get( 'margin.left' ) - this.get( 'margin.right' )
+    }.property( 'width' ),
   
-    h: function(){
-        return ( this.get('height') || 400 ) - this.get('margin.top') - this.get('margin.bottom');
-    }.property('height'),  
+    h: function() {
+        return ( this.get( 'height' ) || 400 ) - this.get( 'margin.top' ) - this.get( 'margin.bottom' )
+    }.property( 'height' ),
   
-    transformG: function(){
-        return "translate(" + this.get('margin.left') + "," + this.get('margin.top') + ")";
+    transformG: function() {
+        return "translate(" + this.get( 'margin.left' ) + "," + this.get( 'margin.top' ) + ")"
     }.property(),
       
     transformX: function(){
-        return "translate(0,"+ this.get('h') +")";
-    }.property('h'),   
+        return "translate(0," + this.get( 'h' ) + ")"
+    }.property( 'h' ),
   
     draw: function(){
         var data = this.get( 'data' )
@@ -120,10 +120,10 @@ App.BarChartComponent = Ember.Component.extend({
 
     },
   
-    didInsertElement: function(){
-        this.draw();
+    didInsertElement: function() {
+        this.draw()
     }
-});
+} )
 
 var data = []
 for( var i = 1; i <= 100; i++ ) {
