@@ -46,6 +46,12 @@ for( type in set ) {
     var total = 0
     step[type] = []
     set[type].forEach( function( d ) {
+        if( total > 0 ) {
+            step[type].push( {
+                date: d.date,
+                cost: total
+            } )
+        }
         step[type].push( {
             name: d.name,
             date: d.date,
@@ -54,10 +60,8 @@ for( type in set ) {
     } )
 }
 
-
-
-x.domain( d3.extent( step['pos'], function( d ) { return d.date } ) )
-y.domain( d3.extent( step['pos'], function( d ) { return d.cost } ) )
+x.domain( d3.extent( step['pos'].concat( step['neg'] ), function( d ) { return d.date } ) )
+y.domain( d3.extent( step['pos'].concat( step['neg'] ), function( d ) { return d.cost } ) )
 
 svg.append( 'g' )
     .attr( {
