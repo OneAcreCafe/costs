@@ -24,11 +24,11 @@ var svg = d3.select( 'body' ).append( 'svg' )
     .attr( 'transform', "translate(" + margin.left + "," + margin.top + ")" )
 
 var data = []
-for( var i = 1; i <= 1000; i++ ) {
+for( var i = 1; i <= 100; i++ ) {
     data.push( {
         name: "Item #" + i,
         cost: ( Math.random() < .25 ? -1 : 1 ) * ( 5 + Math.random() * 3 ),
-        date: new Date( ( new Date() ).getTime() + ( 60 * 60 * 24 * 7 ) * Math.random() ) 
+        date: new Date( ( new Date() ).getTime() + ( 1000 * 60 * 60 * 24 * 7 ) * Math.random() ) 
     } )
 }
 
@@ -36,31 +36,28 @@ data.sort( function( a, b ) {
     return a.date.getTime() - b.date.getTime()
 } )
 
-var pos = data.filter( function( d ) { return d.cost >= 0 } )
-var neg = data.filter( function( d ) { return d.cost < 0 } )
+var set = {
+    pos: data.filter( function( d ) { return d.cost >= 0 } ),
+    neg: data.filter( function( d ) { return d.cost < 0 } )
+}
 
-var stepPos = []
-var total = 0
-pos.forEach( function( d ) {
-    stepPos.push( {
-        name: d.name,
-        date: d.date,
-        cost: total += d.cost
+var step = {}
+for( type in set ) {
+    var total = 0
+    step[type] = []
+    set[type].forEach( function( d ) {
+        step[type].push( {
+            name: d.name,
+            date: d.date,
+            cost: total += Math.abs( d.cost )
+        } )
     } )
-} )
+}
 
-var stepNeg = []
-var total = 0
-neg.forEach( function( d ) {
-    stepNeg.push( {
-        name: d.name,
-        date: d.date,
-        cost: total += Math.abs( d.cost )
-    } )
-} )
 
-x.domain( d3.extent( stepPos, function( d ) { return d.date } ) )
-y.domain( d3.extent( stepPos, function( d ) { return d.cost } ) )
+
+x.domain( d3.extent( step['pos'], function( d ) { return d.date } ) )
+y.domain( d3.extent( step['pos'], function( d ) { return d.cost } ) )
 
 svg.append( 'g' )
     .attr( {
@@ -86,14 +83,14 @@ var line = d3.svg.line()
     .y( function( d ) { return y( d.cost ) } )
     
 svg.append( 'path' )
-    .datum( stepPos )
+    .datum( step['pos'] )
     .attr( {
         class: 'line pos',
         d: line
     } )
 
 svg.append( 'path' )
-    .datum( stepNeg )
+    .datum( step['neg'] )
     .attr( {
         class: 'line neg',
         d: line
