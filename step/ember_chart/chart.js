@@ -91,8 +91,9 @@ App.BarChartComponent = Ember.Component.extend({
             } )
         }
 
-        x.domain( d3.extent( step['pos'].concat( step['neg'] ), function( d ) { return d.date } ) )
-        y.domain( d3.extent( step['pos'].concat( step['neg'] ), function( d ) { return d.cost } ) )
+        var steps = step['pos'].concat( step['neg'] )
+        x.domain( d3.extent( steps, function( d ) { return d.date } ) )
+        y.domain( d3.extent( steps, function( d ) { return d.cost } ) )
 
         svg.append( 'g' )
             .attr( {
@@ -109,9 +110,10 @@ App.BarChartComponent = Ember.Component.extend({
             .x( function( d ) { return x( d.date ) } )
             .y( function( d ) { return y( d.cost ) } )
 
-        ;['pos', 'neg'].forEach( function( type ) {   
+        step.forEach( function( type, data ) {
+            console.log( 'h', arguments )
             svg.append( 'path' )
-	        .datum( step[type] )
+	        .datum( data )
 	        .attr( {
 	            class: "line " + type,
 	            d: line
