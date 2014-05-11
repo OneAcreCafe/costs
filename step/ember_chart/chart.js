@@ -1,6 +1,18 @@
-App.ApplicationController = Ember.ArrayController.extend({
-    content: Ember.A(CHART_DATA)
-});
+App = Ember.Application.create()
+
+App.ApplicationAdapter = DS.FixtureAdapter.extend()
+
+App.LineItem = DS.Model.extend( {
+    name: DS.attr( 'string' ),
+    cost:  DS.attr( 'number' ),
+    time: DS.attr( 'date' )
+} )
+
+App.ApplicationRoute = Ember.Route.extend( {
+    model: function() {
+        return Ember.A(CHART_DATA)
+    }
+} )
   
 App.BarChartComponent = Ember.Component.extend({
     tagName: 'svg',

@@ -10,12 +10,12 @@
 </head>
 <body>
   <script type="text/x-handlebars">
-    {{bar-chart width=300 height=160 data=content}}
+    {{bar-chart width=300 height=160 data=model}}
   </script>
 
   <script type="text/x-handlebars" id="components/bar-chart">
-    <g {{bindAttr transform=transformG}}>
-      <g class="x axis" {{bindAttr transform=transformX}}></g>
+    <g {{bind-attr transform=transformG}}>
+      <g class="x axis" {{bind-attr transform=transformX}}></g>
       <g class="y axis"><text transform="rotate(-90)" y="6" dy=".71em" style="text-anchor:end;">Frequency</text></g>
       <g class="rects"></g>
     </g>
@@ -29,7 +29,6 @@
   <script src="../../js/libs/ember-states.js"></script>
   <script src="../../js/libs/ember-data-latest.js"></script>
 
-  <script src="app.js"></script>
   <script src="chart.js"></script>
 </body>
 </html>
