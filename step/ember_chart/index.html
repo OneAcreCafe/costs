@@ -9,6 +9,18 @@
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+  <script type="text/x-handlebars">
+    {{bar-chart width=300 height=160 data=content}}
+  </script>
+
+  <script type="text/x-handlebars" id="components/bar-chart">
+    <g {{bindAttr transform=transformG}}>
+      <g class="x axis" {{bindAttr transform=transformX}}></g>
+      <g class="y axis"><text transform="rotate(-90)" y="6" dy=".71em" style="text-anchor:end;">Frequency</text></g>
+      <g class="rects"></g>
+    </g>
+  </script>
+
   <script src="../../js/libs/d3/d3.js"></script>
 
   <script src="../../js/libs/jquery-1.10.2.js"></script>
