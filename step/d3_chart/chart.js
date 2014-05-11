@@ -90,7 +90,7 @@ var line = d3.svg.line()
     svg.append( 'path' )
         .datum( step[type] )
         .attr( {
-            class: ['line', type],
+            class: "line " + type,
             d: line
         } )
 } )
