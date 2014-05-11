@@ -10,13 +10,13 @@
 </head>
 <body>
   <script type="text/x-handlebars">
-    {{bar-chart width=300 height=160 data=model}}
+    {{bar-chart data=model}}
   </script>
 
   <script type="text/x-handlebars" id="components/bar-chart">
     <g {{bind-attr transform=transformG}}>
       <g class="x axis" {{bind-attr transform=transformX}}></g>
-      <g class="y axis"><text transform="rotate(-90)" y="6" dy=".71em" style="text-anchor:end;">Frequency</text></g>
+      <g class="y axis"><text transform="rotate(-90)" y="15" dy=".71em" style="text-anchor:end;">Frequency</text></g>
       <g class="rects"></g>
     </g>
   </script>
