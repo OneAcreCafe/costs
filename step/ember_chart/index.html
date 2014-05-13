@@ -10,7 +10,18 @@
 </head>
 <body>
   <script type="text/x-handlebars">
-    {{bar-chart data=model}}
+    {{#link-to 'from-data'}}Data{{/link-to}}
+    {{#link-to 'from-store'}}Store{{/link-to}}
+
+    {{outlet}}
+  </script>
+
+  <script type="text/x-handlebars" id="from-data">
+    {{pos-neg-step-chart data=model}}
+  </script>
+
+  <script type="text/x-handlebars" id="from-store">
+    {{pos-neg-step-chart data=model}}
   </script>
 
   <script type="text/x-handlebars" id="components/bar-chart">

@@ -2,19 +2,41 @@ App = Ember.Application.create()
 
 App.ApplicationAdapter = DS.FixtureAdapter.extend()
 
+App.Router.map( function() {
+    this.resource( 'from-data', { path: '/' } )
+    this.resource( 'from-store', { path: '/store' } )
+} )
+
 App.LineItem = DS.Model.extend( {
     name: DS.attr( 'string' ),
     cost:  DS.attr( 'number' ),
     time: DS.attr( 'date' )
 } )
 
-App.ApplicationRoute = Ember.Route.extend( {
+var data = []
+for( var i = 1; i <= 100; i++ ) {
+    data.push( {
+        id: i,
+	name: "Item #" + i,
+	cost: ( Math.random() < .25 ? -1 : 1 ) * ( 5 + Math.random() * 3 ),
+	time: new Date( ( new Date() ).getTime() + ( 1000 * 60 * 60 * 24 * 7 ) * Math.random() ) 
+    } )
+}
+App.LineItem.FIXTURES = data
+
+App.FromDataRoute = Ember.Route.extend( {
     model: function() {
-        return Ember.A( data )
+        return data
     }
 } )
   
-App.BarChartComponent = Ember.Component.extend({
+App.FromStoreRoute = Ember.Route.extend( {
+    model: function() {
+        return this.store.find( 'line-item' )
+    }
+} )
+
+App.PosNegStepChartComponent = Ember.Component.extend( {
     tagName: 'svg',
     attributeBindings: 'width height'.w(),
     margin: { top: 20, right: 20, bottom: 30, left: 40 },
@@ -37,6 +59,11 @@ App.BarChartComponent = Ember.Component.extend({
   
     draw: function(){
         var data = this.get( 'data' )
+
+        if( typeof data === 'undefined' ) {
+            console.error( 'Data is not defined' )
+            return
+        }
 
         var margin = { top: 20, right: 20, bottom: 30, left: 50 }
         var width = this.get( 'w' )
@@ -64,9 +91,9 @@ App.BarChartComponent = Ember.Component.extend({
             .attr( 'transform', "translate(" + margin.left + "," + margin.top + ")" )
 
         data.sort( function( a, b ) {
-            return a.date.getTime() - b.date.getTime()
+            return a.time.getTime() - b.time.getTime()
         } )
-
+        
         var set = {
             pos: data.filter( function( d ) { return d.cost >= 0 } ),
             neg: data.filter( function( d ) { return d.cost < 0 } )
@@ -79,20 +106,20 @@ App.BarChartComponent = Ember.Component.extend({
             set[type].forEach( function( d ) {
 	        if( total > 0 ) {
 	            step[type].push( {
-		        date: d.date,
+		        time: d.time,
 		        cost: total
 	            } )
 	        }
 	        step[type].push( {
 	            name: d.name,
-	            date: d.date,
+	            time: d.time,
 	            cost: total += Math.abs( d.cost )
 	        } )
             } )
         }
 
         var steps = step['pos'].concat( step['neg'] )
-        x.domain( d3.extent( steps, function( d ) { return d.date } ) )
+        x.domain( d3.extent( steps, function( d ) { return d.time } ) )
         y.domain( d3.extent( steps, function( d ) { return d.cost } ) )
 
         svg.append( 'g' )
@@ -107,31 +134,20 @@ App.BarChartComponent = Ember.Component.extend({
             .call( yAxis )
 
         var line = d3.svg.line()
-            .x( function( d ) { return x( d.date ) } )
+            .x( function( d ) { return x( d.time ) } )
             .y( function( d ) { return y( d.cost ) } )
 
-        step.forEach( function( type, data ) {
-            console.log( 'h', arguments )
+        for( type in step ) {
             svg.append( 'path' )
-	        .datum( data )
+	        .datum( step[type] )
 	        .attr( {
 	            class: "line " + type,
 	            d: line
 	        } )
-        } )
-
+        }
     },
   
     didInsertElement: function() {
         this.draw()
     }
 } )
-
-var data = []
-for( var i = 1; i <= 100; i++ ) {
-    data.push( {
-	name: "Item #" + i,
-	cost: ( Math.random() < .25 ? -1 : 1 ) * ( 5 + Math.random() * 3 ),
-	date: new Date( ( new Date() ).getTime() + ( 1000 * 60 * 60 * 24 * 7 ) * Math.random() ) 
-    } )
-}
