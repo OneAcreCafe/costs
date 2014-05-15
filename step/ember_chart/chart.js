@@ -3,8 +3,8 @@ App = Ember.Application.create()
 App.ApplicationAdapter = DS.FixtureAdapter.extend()
 
 App.Router.map( function() {
-    this.resource( 'from-data', { path: '/' } )
-    this.resource( 'from-store', { path: '/store' } )
+    this.resource( 'chart', { path: '/' } )
+    this.resource( 'table', { path: '/table' } )
 } )
 
 App.LineItem = DS.Model.extend( {
@@ -13,24 +13,26 @@ App.LineItem = DS.Model.extend( {
     time: DS.attr( 'date' )
 } )
 
-var data = []
-for( var i = 1; i <= 100; i++ ) {
-    data.push( {
-        id: i,
-	name: "Item #" + i,
-	cost: ( Math.random() < .25 ? -1 : 1 ) * ( 5 + Math.random() * 3 ),
-	time: new Date( ( new Date() ).getTime() + ( 1000 * 60 * 60 * 24 * 7 ) * Math.random() ) 
-    } )
-}
-App.LineItem.FIXTURES = data
+;( function() {
+    var data = []
+    for( var i = 1; i <= 100; i++ ) {
+        data.push( {
+            id: i,
+	    name: "Item #" + i,
+	    cost: ( Math.random() < .25 ? -1 : 1 ) * ( 5 + Math.random() * 3 ),
+	    time: new Date( ( new Date() ).getTime() + ( 1000 * 60 * 60 * 24 * 7 ) * Math.random() ) 
+        } )
+    }
+    App.LineItem.FIXTURES = data
+} )()
 
-App.FromDataRoute = Ember.Route.extend( {
+App.ChartRoute = Ember.Route.extend( {
     model: function() {
-        return data
+        return this.store.find( 'line-item' )
     }
 } )
-  
-App.FromStoreRoute = Ember.Route.extend( {
+
+App.TableRoute = Ember.Route.extend( {
     model: function() {
         return this.store.find( 'line-item' )
     }
@@ -59,6 +61,10 @@ App.PosNegStepChartComponent = Ember.Component.extend( {
   
     draw: function(){
         var data = this.get( 'data' )
+
+        if( data.content ) {
+            data = data.content
+        }
 
         if( typeof data === 'undefined' ) {
             console.error( 'Data is not defined' )
@@ -91,12 +97,12 @@ App.PosNegStepChartComponent = Ember.Component.extend( {
             .attr( 'transform', "translate(" + margin.left + "," + margin.top + ")" )
 
         data.sort( function( a, b ) {
-            return a.time.getTime() - b.time.getTime()
+            return a.get( 'time' ).getTime() - b.get( 'time' ).getTime()
         } )
         
         var set = {
-            pos: data.filter( function( d ) { return d.cost >= 0 } ),
-            neg: data.filter( function( d ) { return d.cost < 0 } )
+            pos: data.filter( function( d ) { return d.get( 'cost' ) >= 0 } ),
+            neg: data.filter( function( d ) { return d.get( 'cost' ) < 0 } )
         }
 
         var step = {}
@@ -106,14 +112,14 @@ App.PosNegStepChartComponent = Ember.Component.extend( {
             set[type].forEach( function( d ) {
 	        if( total > 0 ) {
 	            step[type].push( {
-		        time: d.time,
+		        time: d.get( 'time' ),
 		        cost: total
 	            } )
 	        }
 	        step[type].push( {
-	            name: d.name,
-	            time: d.time,
-	            cost: total += Math.abs( d.cost )
+	            name: d.get( 'name' ),
+	            time: d.get( 'time' ),
+	            cost: total += Math.abs( d.get( 'cost' ) )
 	        } )
             } )
         }

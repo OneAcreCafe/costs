@@ -9,19 +9,29 @@
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <script type="text/x-handlebars">
-    {{#link-to 'from-data'}}Data{{/link-to}}
-    {{#link-to 'from-store'}}Store{{/link-to}}
-
-    {{outlet}}
-  </script>
-
-  <script type="text/x-handlebars" id="from-data">
+  <script type="text/x-handlebars" id="chart">
     {{pos-neg-step-chart data=model}}
   </script>
 
-  <script type="text/x-handlebars" id="from-store">
-    {{pos-neg-step-chart data=model}}
+  <script type="text/x-handlebars" id="table">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Name</th>
+          <th>Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each model}}
+          <tr>
+            <td>{{time}}</td>
+            <td>{{name}}</td>
+            <td>{{cost}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
   </script>
 
   <script type="text/x-handlebars" id="components/bar-chart">
