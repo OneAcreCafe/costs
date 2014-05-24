@@ -13,9 +13,6 @@
     <div class="container">
       <nav class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
-          <div class="navbar-header pull-right">
-            {{#link-to 'new_reading' class="btn btn-default navbar-btn"}}<span class="glyphicon glyphicon-plus" />{{/link-to}}
-          </div>
           <div class="navbar-header">
             <button type="button" class="navbar-toggle pull-left" data-toggle="collapse" data-target="#nav-options">
               <span class="sr-only">Toggle navigation</span>
@@ -23,16 +20,13 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Meter Reader</a>
+            <a class="navbar-brand" href="#">OAC</a>
           </div>
           
           <div class="collapse navbar-collapse" id="nav-options">
             <ul class="nav navbar-nav">
-              {{#link-to "readings" tagName="li" data-toggle="collapse" data-target="#nav-options"}}
-                <a {{bind-attr href="view.href"}}>Readings</a>
-              {{/link-to}}
-              {{#link-to "wells" tagName="li" data-toggle="collapse" data-target="#nav-options"}}
-                <a {{bind-attr href="view.href"}}>Wells</a>
+              {{#link-to "menus" tagName="li" data-toggle="collapse" data-target="#nav-options"}}
+                <a {{bind-attr href="view.href"}}>Menus</a>
               {{/link-to}}
             </ul>
           </div>
@@ -43,138 +37,10 @@
     </div>
   </script>
 
-  <script type="text/x-handlebars" id="wells">
-    <div id="wells">
-      {{#each}}
-        <div class="row">
-          {{#link-to 'well' this}}
-            <div class="col-xs-2">{{asset_id}}</div>
-            <div class="col-xs-10">{{name}}</div>
-          {{/link-to}}
-        </div>
-      {{/each}}
+  <script type="text/x-handlebars" id="menus">
+    <div id="menus">
+      {{menu-calendar}}
     </div>
-  </script>
-
-  <script type="text/x-handlebars" id="well">
-    <div class="row"><h1>{{name}} ({{asset_id}})</h1></div>
-    <div class="row"><h2>&lt;{{two-digit-float latitude}}, {{two-digit-float longitude}}&gt;</h2></div>
-    <div id="reading-list">
-      {{#each reading in model.readings}}
-        <div class="row">
-          <div class="col-xs-12">{{#link-to 'reading' reading}}{{format-time-long reading.time}}{{/link-to}}</div>
-        </div>
-      {{/each}}
-    </div>
-  </script>
-
-  <script type="text/x-handlebars" id="readings">
-    <div id="readings">
-      {{#each model}}
-        {{#link-to 'reading' this}}
-          <div class="row">
-            <div class="asset-id col-xs-3">{{two-digit-float mcf}}</div>
-            <div class="col-xs-9">
-              <div class="row">{{well.name}}</div>
-              <div class="row">{{format-time-passed time}}</div>
-            </div>
-          </div>
-        {{/link-to}}
-      {{/each}}
-    </div>
-  </script>
-
-  <script type="text/x-handlebars" id="reading">
-    <div class="row">
-      <h1>{{#link-to 'well' well}}{{well.name}}{{/link-to}}</h1>
-    </div>
-    <div class="row">
-      <div class="col-xs-3 prop">Time:</div>
-      <div class="col-xs-9">{{format-time-numeric time}}</div>
-    </div>
-    <div class="row">
-      <div class="col-xs-3 prop">MCF:</div>
-      <div class="col-xs-9">{{mcf}}</div>
-    </div>
-    <div class="row">
-      <div class="col-xs-3 prop">Line:</div>
-      <div class="col-xs-9">{{line}}</div>
-    </div>
-    <div class="row">
-      <div class="col-xs-3 prop">TBG:</div>
-      <div class="col-xs-9">{{tbg}}</div>
-    </div>
-    <div class="row">
-      <div class="col-xs-3 prop">CSG:</div>
-      <div class="col-xs-9">{{csg}}</div>
-    </div>
-  </script>
-
-  <script type="text/x-handlebars" id="new_reading">
-    <form class="form-horizontal" role="form">
-      <div class="form-group">
-        <label for="title" class="col-xs-2 control-label">Well</label>
-        <div class="col-xs-10">
-          {{view Ember.Select
-            id = "well"
-            class = "form-control"
-            content = wells
-            optionValuePath = "content.id"
-            optionLabelPath = "content.name"}}
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="excerpt" class="col-xs-2 control-label">MCF</label>
-        <div class="col-xs-10">
-          <input type="number" class="form-control" id="mcf" name="mcf" placeholder="MCF" required step="any"/>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="url" class="col-xs-2 control-label">Line</label>
-        <div class="col-xs-10">
-          <input type="number" class="form-control" id="line" name="line" placeholder="Line" required/>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="url" class="col-xs-2 control-label">TBG</label>
-        <div class="col-xs-10">
-          <input type="number" class="form-control" id="tbg" name="tbg" placeholder="TBG" required/>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="url" class="col-xs-2 control-label">CSG</label>
-        <div class="col-xs-10">
-          <input type="number" class="form-control" id="csg" name="csg" placeholder="CSG" required/>
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="col-xs-offset-2 col-xs-10">
-          <button type="submit" class="btn btn-success" {{action 'save'}}>Add</button>
-        </div>
-      </div>
-    </form>
-  </script>
-
-  <script type="text/x-handlebars" id="new_well">
-    <form class="form-horizontal" role="form">
-      <div class="form-group">
-        <label for="title" class="col-xs-2 control-label">Name</label>
-        <div class="col-xs-10">
-          <input type="text" class="form-control" id="name" name="name" placeholder="Name" required/>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="excerpt" class="col-xs-2 control-label">Asset ID</label>
-        <div class="col-xs-10">
-          <input type="number" class="form-control" id="asset-id" name="asset-id" placeholder="Asset ID" required/>
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="col-xs-offset-2 col-xs-10">
-          <button type="submit" class="btn btn-success" {{action 'save'}}>Add</button>
-        </div>
-      </div>
-    </form>
   </script>
 
   <script type="text/x-handlebars" id="login">
@@ -215,7 +81,6 @@
   <script src="js/libs/bootstrap-3.1.1.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/showdown/0.3.1/showdown.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.1.0/moment.min.js"></script>
-  <script src="js/db.js"></script>
   <script src="js/app.js"></script>
 
   <!-- to activate the test runner, add the "?test" query string parameter -->

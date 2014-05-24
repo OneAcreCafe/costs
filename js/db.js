@@ -1,34 +1,3 @@
-App = Ember.Application.create()
-
-App.ApplicationAdapter = DS.FixtureAdapter.extend()
-
-App.Host = 'http://localhost:5984'
-
-App.ApplicationAdapter = EmberCouchDBKit.DocumentAdapter.extend( { db: 'wells', host: App.Host } )
-App.ApplicationSerializer = EmberCouchDBKit.DocumentSerializer.extend()
-
-App.AttachmentAdapter = EmberCouchDBKit.AttachmentAdapter.extend( { db: 'wells', host: App.Host } )
-App.AttachmentSerializer = EmberCouchDBKit.AttachmentSerializer.extend()
-
-App.Well = DS.Model.extend( {
-    type: DS.attr('string', { defaultValue: 'well' } ),
-    name: DS.attr( 'string' ),
-    asset_id:  DS.attr( 'number' ),
-    latitude:  DS.attr( 'number' ),
-    longitude:  DS.attr( 'number' ),
-    readings: DS.hasMany( 'reading', { async: true } )
-} )
-
-App.Reading = DS.Model.extend( {
-    type: DS.attr('string', { defaultValue: 'reading' } ),
-    time: DS.attr( 'date' ),
-    mcf:  DS.attr( 'number' ),
-    line:  DS.attr( 'number' ),
-    tbg:  DS.attr( 'number' ),
-    csg:  DS.attr( 'number' ),
-    well: DS.belongsTo( 'well' )
-} )
-
 ;( function() {
     var numReadings = 10
 

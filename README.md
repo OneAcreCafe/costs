@@ -1,14 +1,16 @@
 Costs
 =====
 
-This is a system to manage the costs for a restaurant.
+My goal is to allow high level optimization of the economy by computer system. I want computers to figure out how much everything should cost so that everyone has a place to live and food to eat.
 
-The goal is for the operational process to be publicly available so that multiple businesses could be aggregated and the entire system analyzed.
+This can be accomplished by codifying the operational structure of an organization and then simply publishing it. A system could then aggregate information from multiple businesses and work on overarching effiency.
 
-The initial program will input:
+I don't know exactly what the system would look like, but it is a huge data problem that is not currently computer analyzed. The possible ramifications are innumerable.
 
-* Costs for ingredients
-* Recipes
-* Expected number of meals per day
+I want to start with a restaurant. For version 0.2 I want to take in recipes and the costs of ingredients, and have the computer calculate prices for items.
 
-And will calculate prices then generate simulated data for purchases and sales.
+I would like to pull the recipe information from Freebase, if possible.
+
+# Paid Development
+
+I have bitcoins that I would be willing to trade for commits. Just [contact me](mailto:will@dhappy.org).
