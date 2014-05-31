@@ -15,6 +15,9 @@ App.AttachmentSerializer = EmberCouchDBKit.AttachmentSerializer.extend()
 App.Router.map( function() {
     this.resource( 'menus' )
     this.resource( 'menu', { path: '/menu/:date' } )
+    this.resource( 'recipes', { path: '/' } )
+    this.resource( 'recipe', { path: '/recipe/:recipe_id' } )
+    this.resource( 'new_recipe', { path: '/recipe/new' } )
     this.resource( 'login', { path: '/login' } )
 } )
 
@@ -29,16 +32,32 @@ App.MenuItem = DS.Model.extend( {
 } )
 
 App.Recipe = DS.Model.extend( {
-    portions: DS.hasMany( 'portion' )
+    portions: DS.hasMany( 'portion' ),
+    mid: DS.attr( 'string' )    
 } )
 
 App.Portion = DS.Model.extend( {
     ingredient: DS.belongsTo( 'ingredient' ),
     quantity: DS.attr( 'number' ),
-    unit: DS.attr( 'number' )
+    unit: DS.belongsTo( 'unit' )
 } )
 
 App.Ingredient = DS.Model.extend( {
+    name: DS.attr( 'string' ),
+    mid: DS.attr( 'string' )    
+} )
+
+App.Unit = DS.Model.extend( {
+    name: DS.attr( 'string' ),
+    abbreviation: DS.attr( 'string' ),
+    type: DS.attr( 'string' ),
+    perBase: DS.attr( 'number' ),
+    mid: DS.attr( 'string' )    
+} )
+
+App.Price = DS.Model.extend( {
+    portion: DS.belongsTo( 'portion' ),
+    cost: DS.attr( 'number' )
 } )
 
 App.LineItem = DS.Model.extend( {
@@ -58,145 +77,49 @@ App.LineItem = DS.Model.extend( {
         } )
     }
     App.LineItem.FIXTURES = data
+    App.Recipe.FIXTURES = []
 } )()
 
-App.WellsRoute = Ember.Route.extend( {
+App.RecipesRoute = Ember.Route.extend( {
     model: function() {
-        return this.store.find( 'well' )
+        return this.store.find( 'recipe' )
     }
 } )
 
-App.WellRoute = Ember.Route.extend( {
+App.RecipeRoute = Ember.Route.extend( {
     model: function( params ) {
-        return this.store.find( 'well', params.well_id )
+        return this.store.find( 'recipe', params.id )
     }
 } )
 
-App.ReadingsRoute = Ember.Route.extend( {
-    model: function() {
-        var self = this
-        return this.store
-            .findQuery( 'reading', {
-                designDoc: 'reading',
-                viewName: 'by_time',
-                options: {
-                    descending: true,
-                    limit: 100
-                }
-            } )
-            .then( function( data ) { return data },
-                   function() { self.transitionTo( 'login' ) } )
+App.NewRecipeController = Ember.ObjectController.extend( {
+    importModalId: function() {
+        return this.get('elementId') + "importAlertModal";
+    }.property('elementId'),
+    actions: {
+        save: function() {
+            var self = this
+            var store = this.get( 'store' )
+            console.error( 'recipe not saved' )
+            self.transitionToRoute( 'recipes' )
+        },
+        showImportModal: function( node ) {
+            console.log('Showing import modal for node: ' + node);
+            console.log( this.get( 'importModalId' ) )
+            $("#" + this.get( 'importModalId' )).modal( 'show' )
+        }
+
     }
 } )
 
-App.ReadingRoute = Ember.Route.extend( {
-    model: function() {
-        return typeof(params) !== 'undefined' && this.store.find( 'reading', params.reading_id )
-    }
-} )
-
-var gpsCoordinate
-navigator.geolocation.getCurrentPosition( function( position ) {
-    gpsCoordinate = { x: position.coords.longitude, y: position.coords.latitude }
-} )
-
-App.NewReadingController = Ember.ObjectController.extend( {
-    init: function() {
+App.NewRecipeView = Ember.View.extend({
+    didInsertElement: function(){
         this._super()
-        this.set( 'wells', Ember.ArrayProxy.createWithMixins( Ember.SortableMixin, {
-            content: this.get( 'store' ).find( 'well' ),
-            sortProperties: ['name'],
-            sortAscending: true,
-            orderBy: function( item1, item2 ) {
-                if( gpsCoordinate ) {
-                    function distance( p1, p2 ) {
-                        return Math.sqrt( Math.pow( p1.x - p2.x, 2 ) + Math.pow( p1.y - p2.y, 2 ) )
-                    }
-                    
-                    function toGPS( item ) {
-                        return distance(
-                            gpsCoordinate,
-                            {
-                                x: Ember.get( item, 'longitude' ),
-                                y: Ember.get( item, 'latitude' )
-                            }
-                        )
-                    }
-
-                    var offsets = [ toGPS( item1 ), toGPS( item2 ) ]
-                    
-                    return offsets[0] - offsets[1]
-                } else {
-                    return Ember.get( item1, 'name' ).localeCompare( Ember.get( item2, 'name' ) )
-                }
-            }
-        } ) )
-    },
-    actions: {
-        save: function() {
-            var self = this
-            var store = this.get( 'store' )
-            store.find( 'well', $('#well').val() ).then( function( well ) {
-                var reading = store.createRecord( 'reading', {
-                    well: well,
-                    time: new Date(),
-                    mcf: $('#mcf').val(),
-                    line: $('#line').val(),
-                    tbg: $('#tbg').val(),
-                    csg: $('#csg').val()
-                } )
-                reading.save()
-
-                well.get( 'readings' ).then( function( readings ) {
-                    readings.pushObject( reading )
-                    well.save()
-                } )
-
-                self.transitionToRoute( 'readings' )
-            } )
-        }
+        Ember.run.scheduleOnce( 'afterRender', this, function() {
+            window.initRecipe()
+        });
     }
-} )
-
-App.NewWellController = Ember.ObjectController.extend( {
-    actions: {
-        save: function() {
-            var self = this
-            var store = this.get( 'store' )
-            var well = store.createRecord( 'well', {
-                asset_id: $('#asset-id').val(),
-                name: $('#name').val()
-            } )
-            well.save()
-            
-            self.transitionToRoute( 'wells' )
-        }
-    }
-} )
-
-App.LoginController = Ember.ObjectController.extend( {
-    actions: {
-        login: function() {
-            var self = this
-            console.log( "%@/_session?user=%@&pass=%@".fmt(App.Host, $('#username').val(), $('#password').val() ) )
-            $
-                .ajax( {
-                    url: "%@/_session?user=%@&pass=%@".fmt( App.Host, $('#username').val(), $('#password').val() )
-                } )
-                .then(
-                    function( response ) {
-                        self.transitionToRoute( 'readings' )
-                        return response
-                    },
-                    function() {
-                        console.log( 'error' )
-                    }
-                )
-                       
-        }
-    }
-} )
-
+});
 
 Ember.Handlebars.registerBoundHelper( 'format-time-passed', function( time ) {
     return moment( time ).fromNow()

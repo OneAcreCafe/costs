@@ -1,0 +1,149 @@
+body {
+    margin-top: 5em;
+}
+
+table {
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid gray;
+    padding: .25em 1em;
+}
+
+#total {
+    text-align: right;
+    padding-right: 3%;
+}
+
+#total:before {
+    content: 'Total: ';
+}
+
+.ingredient input {
+    width: 100%;
+}
+
+.quantity input[type='text'] {
+    width: 3.25em;
+    margin-right: 5%;
+    display: inline;
+}
+
+.quantity select {
+    width: 7em;
+    display: inline;
+}
+
+.icon {
+    width: 5%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 75% 75%;
+    text-align: center;
+}
+
+.icon img {
+    max-height: 2.4em;
+    max-width: 100%;
+}
+
+.loading {
+    background-image: url('//dhappy.org/.../image/icon/loading/');
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.calories {
+    text-align: center;
+    padding-top: .5em;
+}
+
+.header .calories {
+    padding-top: 0em;
+}
+
+#recipe.loading {
+}
+
+.buttons {
+    text-align: right;
+}
+
+.cals_in {
+    margin: auto .75em;
+}
+
+.modal input, .modal select {
+    width: 20%;
+}
+
+.modal select {
+    margin-left: .75em;
+}
+
+.modal div {
+    text-align: center;
+}
+
+.modal h3 {
+    text-align: left;
+}
+
+.modal span {
+    margin: auto .75em;
+}
+
+.modal a {
+    margin-left: .75em;
+}
+
+.ingredients > div {
+    border: 1px solid;
+    border-style: none solid solid solid;
+    padding: .25em 0;
+}
+
+.ingredients input, .ingredients select {
+    margin: 0;
+}
+
+.header {
+    border: 1px solid;
+}
+
+.header [class*="span"] {
+    min-height: 1em;
+}
+
+.notes textarea {
+    height: 1.5em;
+    width: 100%;
+    margin: 0;
+}
+
+label {
+    display: inline;
+}
+
+#dish-modal input {
+    width: 97%;
+}
+
+#dish-modal .fbs-pane {
+    position: relative;
+    top: -2.5em;
+}
+
+#dish-modal .fbs-pane * {
+    text-align: left;
+}
+
+.control input, .control .btn {
+    position: relative;
+    top: -.5em;
+}
+
+#description textarea {
+    width: 100%;
+}

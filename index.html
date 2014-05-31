@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Meter Reader</title>
+  <title>Costs</title>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="stylesheet" href="//www.gstatic.com/freebase/suggest/4_2/suggest.min.css" />
   <link rel="stylesheet" href="css/bootstrap-3.1.1.min.css"/>
   <link rel="stylesheet" href="css/normalize.css"/>
+  <link rel="stylesheet" href="css/recipe.css"/>
   <link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
@@ -13,6 +15,9 @@
     <div class="container">
       <nav class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
+          <div class="navbar-header pull-right">
+            {{#link-to 'new_recipe' class="btn btn-default navbar-btn"}}<span class="glyphicon glyphicon-plus" />{{/link-to}}
+          </div>
           <div class="navbar-header">
             <button type="button" class="navbar-toggle pull-left" data-toggle="collapse" data-target="#nav-options">
               <span class="sr-only">Toggle navigation</span>
@@ -28,6 +33,9 @@
               {{#link-to "menus" tagName="li" data-toggle="collapse" data-target="#nav-options"}}
                 <a {{bind-attr href="view.href"}}>Menus</a>
               {{/link-to}}
+              {{#link-to "recipes" tagName="li" data-toggle="collapse" data-target="#nav-options"}}
+                <a {{bind-attr href="view.href"}}>Recipes</a>
+              {{/link-to}}
             </ul>
           </div>
         </div>
@@ -40,6 +48,65 @@
   <script type="text/x-handlebars" id="menus">
     <div id="menus">
       {{menu-calendar}}
+    </div>
+  </script>
+
+  <script type="text/x-handlebars" id="component/import-recipe">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Import Recipe</h4> 
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <input id="recipe" type="text" class="form-control" placeholder="Enter a recipe…"/>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> 
+        <button type="button" class="btn btn-danger" {{action "importRecipe"}}>Import</button> 
+      </div>
+    </div>
+  </script>
+
+  <script type="text/x-handlebars" id="new_recipe">
+    <div id="new-recipe" class="container">
+      <div class="row control">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <div class="col-xs-1">
+              <label class="control-label" for="recipe">Recipe:</label>
+            </div>
+            <div class="col-xs-10">
+              <input id="recipe" type="text" class="form-control" placeholder="Enter a recipe name…"/>
+            </div>
+            <div class="col-xs-1">
+              <a class="save btn btn-default" {{action showImportModal}}>Import</a>
+              <a class="save btn btn-default">Save</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row header">
+        <div class="icon col-xs-1"></div>
+        <div class="ingredient col-xs-2">Ingredient</div>
+        <div class="quantity col-xs-4">Quantity</div>
+        <div class="notes col-xs-3">Notes</div>
+        <div class="calories col-xs-1">Calories</div>
+        <div class="controls col-xs-1"></div>
+      </div>
+      <div class="ingredients row"></div>
+      <div class="row">
+        <div id="total" class="col-xs-1"></div>
+        <div class="col-xs-11"></div>
+      </div>
+      <div id="description" class="row">
+        <textarea></textarea>
+        <div id="resizeCopy"></div>
+      </div>
+      <div id="errors" class="row"></div>
     </div>
   </script>
 
@@ -65,7 +132,8 @@
     </form>
   </script>
 
-  <script src="js/libs/jquery-1.10.2.js"></script>
+  <script src="js/libs/jquery-1.8.1.min.js"></script>
+  <!--<script src="js/libs/jquery-1.10.2.js"></script>-->
   <script src="js/libs/handlebars-1.1.2.js"></script>
   <script src="js/libs/ember-1.5.1.js"></script>
   <script src="js/libs/ember-states.js"></script>
@@ -79,8 +147,13 @@
   <script src="js/libs/ember-couchdb/revs-adapter.js"></script>
 
   <script src="js/libs/bootstrap-3.1.1.min.js"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/showdown/0.3.1/showdown.min.js"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.1.0/moment.min.js"></script>
+  <script src="js/libs/showdown.min.js"></script>
+  <script src="js/libs/moment.min.js"></script>
+  <script src="js/libs/freebase-suggest.min.js"></script>
+  <script src="js/libs/jquery.numeric.js"></script>
+
+  <script src="js/recipe_lookup.js"></script>
+  <script src="js/converter.js"></script>
   <script src="js/app.js"></script>
 
   <!-- to activate the test runner, add the "?test" query string parameter -->
